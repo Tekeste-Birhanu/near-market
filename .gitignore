@@ -1,0 +1,12 @@
+node_modules/
+/server/generated/
+.npm-cache/
+dist/
+coverage/
+.vite/
+.env
+.env.*
+!.env.example
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*

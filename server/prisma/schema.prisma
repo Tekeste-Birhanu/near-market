@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ListingType {
+  ITEM
+  HOUSE_RENTAL
+
+  @@map("listing_type")
+}
+
+enum ItemCategory {
+  ELECTRONICS
+  CLOTHING
+  OTHER
+
+  @@map("item_category")
+}
+
+enum ItemCondition {
+  NEW
+  USED
+
+  @@map("item_condition")
+}
+
+enum ListingStatus {
+  AVAILABLE
+  SOLD
+  UNAVAILABLE
+
+  @@map("listing_status")
+}
+
+model User {
+  id               String    @id @default(uuid()) @db.Uuid
+  telegramUserId   BigInt    @unique @map("telegram_user_id") @db.BigInt
+  telegramUsername String?   @map("telegram_username") @db.Text
+  displayName      String    @map("display_name") @db.Text
+  phoneNumber      String?   @map("phone_number") @db.Text
+  isAdmin          Boolean   @default(false) @map("is_admin")
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  listings         Listing[]
+
+  @@map("users")
+}
+
+model Listing {
+  id                 String         @id @default(uuid()) @db.Uuid
+  sellerId           String         @map("seller_id") @db.Uuid
+  listingType        ListingType    @map("listing_type")
+  title              String         @db.Text
+  description        String         @db.Text
+  itemCategory       ItemCategory?  @map("item_category")
+  itemCondition      ItemCondition? @map("item_condition")
+  rentalAddress      String?        @map("rental_address") @db.Text
+  priceAmount        Decimal?       @map("price_amount") @db.Decimal(12, 2)
+  isNegotiable       Boolean        @default(false) @map("is_negotiable")
+  availabilityStatus ListingStatus  @default(AVAILABLE) @map("availability_status")
+  createdAt          DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  seller             User           @relation(fields: [sellerId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  images             ListingImage[]
+
+  @@index([listingType, availabilityStatus, createdAt(sort: Desc)])
+  @@index([sellerId, createdAt(sort: Desc)])
+  @@map("listings")
+}
+
+model ListingImage {
+  id         String  @id @default(uuid()) @db.Uuid
+  listingId  String  @map("listing_id") @db.Uuid
+  position   Int     @db.SmallInt
+  mimeType   String  @map("mime_type") @db.Text
+  imageBytes Bytes   @map("image_bytes") @db.ByteA
+  listing    Listing @relation(fields: [listingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([listingId, position])
+  @@map("listing_images")
+}

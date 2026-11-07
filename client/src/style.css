@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+:root {
+  font-family: system-ui, sans-serif;
+  color: var(--tg-theme-text-color, #172033);
+  background: var(--tg-theme-bg-color, #f5f7fb);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  color-scheme: light dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.app {
+  width: min(100% - 2rem, 40rem);
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.app h1 {
+  margin: 0;
+  color: var(--tg-theme-link-color, #2563eb);
+  font-size: 1.5rem;
+}
+
+.app p {
+  margin: 0.75rem 0 0;
+  color: var(--tg-theme-hint-color, #586174);
+}
